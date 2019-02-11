@@ -1,12 +1,13 @@
-#include<math.h>
-#include<stdio.h>
-#include<stdint.h>
-#include<string.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "xcommon.h"
+#include "ml_common.h"
 #include "ml_opencl.h"
 
-XPUBLIC size_t ml_render_buffer_node(ml_token_node_t *node, size_t position, char *buffer) {
+ML_PUBLIC size_t ml_render_buffer_node(ml_token_node_t *node, size_t position, char *buffer) {
 	switch(node->token_type) {
 		case ML_TOKEN_TYPE_EXPRESSION: {
 			size_t argument_index = 0;
@@ -47,7 +48,7 @@ XPUBLIC size_t ml_render_buffer_node(ml_token_node_t *node, size_t position, cha
 	return position;
 }
 
-char* ml_render_buffer(ml_token_node_t node) {
+ML_PUBLIC char* ml_render_buffer(ml_token_node_t node) {
 	char *buffer; size_t buffer_size = 0;
 	buffer_size = ml_render_buffer_node(&node, 0, NULL);
 	buffer = malloc((buffer_size + 1) * sizeof(char));

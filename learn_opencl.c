@@ -1,9 +1,14 @@
 #include <stdio.h>		
 #include <stdlib.h>		
-#ifdef __APPLE__		
-#	include <OpenCL/opencl.h>		
-#else		
+
+#ifndef CL_TARGET_OPENCL_VERSION
+#define CL_TARGET_OPENCL_VERSION 220
+#endif
+
+#ifndef __APPLE__		
 #	include <CL/cl.h>		
+#else		
+#	include <OpenCL/opencl.h>		
 #endif		
 
 #define MAX_SOURCE_SIZE (1024 * 4)
@@ -96,9 +101,10 @@ int main() {
 	*/
 	program_buffer = (char*)malloc(program_size + 1);
 	program_buffer[program_size] = '\0';
-	if(!(fread(program_buffer, sizeof(char), program_size, program_handle)) > 0) {
-		printf("error: fread\n"); exit(EXIT_FAILURE);
-	}
+	if(fread(program_buffer, sizeof(char), program_size, program_handle) == 0) {
+    printf("error: fread\n"); exit(EXIT_FAILURE);
+  }
+
 	fclose(program_handle);
 
 	program = clCreateProgramWithSource(context, 1, (const char**)&program_buffer, (const size_t*)&program_size, &errcode);

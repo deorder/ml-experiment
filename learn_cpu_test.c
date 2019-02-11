@@ -1,11 +1,11 @@
-#include<math.h>
-#include<stdio.h>
-#include<stdint.h>
-#include<xmmintrin.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <xmmintrin.h>
 
-#include "xcommon.h"
+#include "ml_common.h"
 #include "xlut_exp.h"
-#include "ml_cpu.h"
 
 #define SCALAR_TYPE_VECTOR4
 
@@ -20,17 +20,10 @@
 #define ML_MAX_VECTOR_SIZE 128
 #define ML_MAX_MATRIX_SIZE 128
 
-#define PUBLIC
-#define PRIVATE static
-#define INLINE __inline__ __attribute__((always_inline)) 
-#define RESTRICT __restrict__
-#define ALIGN(x) __attribute__((aligned(x)))
-#define VECTOR(x) __attribute__((vector_size(x)))
-
 #ifdef SCALAR_TYPE_FLOAT
 typedef struct {
 	float x, y, z, w;
-} ALIGN(16) vector4_t;
+} ML_ALIGN(16) vector4_t;
 #endif
 
 #ifdef SCALAR_TYPE_VECTOR4
@@ -38,7 +31,7 @@ typedef __m128 vector4_t;
 #endif
 
 #ifdef SCALAR_TYPE_GCC_VECTOR4
-typedef float vector4_t VECTOR(16);
+typedef float vector4_t ML_VECTOR(16);
 #endif
 
 typedef float ml_type_t;
@@ -53,7 +46,7 @@ typedef struct {
 	ml_vector_t data[ML_MAX_MATRIX_SIZE];
 } ml_matrix_t;
 
-XINLINE ml_type_t vector_dot(ml_vector_t xs, ml_vector_t ys) {
+ML_INLINE ml_type_t vector_dot(ml_vector_t xs, ml_vector_t ys) {
 	size_t index = 0;
 	ml_type_t result = ML_TYPE_ZERO;
 	for(index = 0; index < xs.columns; index++) {
@@ -62,7 +55,7 @@ XINLINE ml_type_t vector_dot(ml_vector_t xs, ml_vector_t ys) {
 	return result;
 }
 
-XINLINE ml_vector_t matrix_vector_mul(ml_matrix_t xs, ml_vector_t ys) {
+ML_INLINE ml_vector_t matrix_vector_mul(ml_matrix_t xs, ml_vector_t ys) {
 	size_t index = 0;
 	ml_vector_t result = {xs.rows, {0}};
 	for(index = 0; index < xs.rows; index++) {
@@ -71,7 +64,7 @@ XINLINE ml_vector_t matrix_vector_mul(ml_matrix_t xs, ml_vector_t ys) {
 	return result;
 }
 
-XINLINE ml_vector_t vector_element_mul(ml_vector_t xs, ml_vector_t ys) {
+ML_INLINE ml_vector_t vector_element_mul(ml_vector_t xs, ml_vector_t ys) {
 	size_t index = 0;
 	ml_vector_t result = {xs.columns, {0}};
 	for(index = 0; index < xs.columns; index++) {
@@ -80,7 +73,7 @@ XINLINE ml_vector_t vector_element_mul(ml_vector_t xs, ml_vector_t ys) {
 	return result;
 }
 
-XINLINE ml_vector_t sigmoid(const ml_vector_t xs) {
+ML_INLINE ml_vector_t sigmoid(const ml_vector_t xs) {
 	size_t index = 0;
 	ml_vector_t result = {xs.columns, {0}};
 	for(index = 0; index < xs.columns; index++) {

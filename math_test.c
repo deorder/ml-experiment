@@ -1,9 +1,10 @@
-#include<math.h>
-#include<stdio.h>
-#include<stdint.h>
-#include<xmmintrin.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <xmmintrin.h>
 
-#include "xcommon.h"
+#include "ml_common.h"
 //#include "xlut_exp.h"
 
 #define SCALAR_TYPE_FLOAT
@@ -18,50 +19,43 @@ typedef float xfloat_t;
 #define xfloat_exp(x) expf(x)
 //#define xfloat_exp(x) xlut_exp(x)
 
-#define PUBLIC
-#define PRIVATE static
-#define INLINE __inline__ __attribute__((always_inline)) 
-#define RESTRICT __restrict__
-#define ALIGN(x) __attribute__((aligned(x)))
-#define VECTOR(x) __attribute__((vector_size(x)))
-
 #ifdef SCALAR_TYPE_VECTOR4
 typedef __m128 xvector4_t;
 #endif
 
 #ifdef SCALAR_TYPE_GCC_VECTOR4
-typedef float xvector4_t VECTOR(16);
-typedef ALIGN(16) struct xmatrix4_s {
+typedef float xvector4_t ML_VECTOR(16);
+typedef ML_ALIGN(16) struct xmatrix4_s {
 	xvector4_t row[4];
 } xmatrix4_t;
 #endif
 
 #ifdef SCALAR_TYPE_FLOAT
-typedef ALIGN(16) struct xvector4_s {
+typedef ML_ALIGN(16) struct xvector4_s {
 	xfloat_t col[4];
 } xvector4_t;
 
-typedef ALIGN(16) struct xmatrix4_s {
+typedef ML_ALIGN(16) struct xmatrix4_s {
 	xvector4_t row[4];
 } xmatrix4_t;
 #endif
 
 #ifdef SCALAR_TYPE_FLOAT
-XINLINE xvector4_t xvector4_set(const xfloat_t x, const xfloat_t y, const xfloat_t z, const xfloat_t w) {
+ML_INLINE xvector4_t xvector4_set(const xfloat_t x, const xfloat_t y, const xfloat_t z, const xfloat_t w) {
 	xvector4_t r = {{x, y, z, w}};
 	return r;
 }
 #endif
 
 #ifdef SCALAR_TYPE_GCC_VECTOR4
-XINLINE xvector4_t xvector4_set(const xfloat_t x, const xfloat_t y, const xfloat_t z, const xfloat_t w) {
+ML_INLINE xvector4_t xvector4_set(const xfloat_t x, const xfloat_t y, const xfloat_t z, const xfloat_t w) {
 	xvector4_t r = {x, y, z, w};
 	return r;
 }
 #endif
 
 #ifdef SCALAR_TYPE_FLOAT
-XINLINE xmatrix4_t xmatrix4_set(
+ML_INLINE xmatrix4_t xmatrix4_set(
 		const xfloat_t s00, const xfloat_t s01, const xfloat_t s02, const xfloat_t s03,
 		const xfloat_t s10, const xfloat_t s11, const xfloat_t s12, const xfloat_t s13,
 		const xfloat_t s20, const xfloat_t s21, const xfloat_t s22, const xfloat_t s23,
@@ -78,7 +72,7 @@ XINLINE xmatrix4_t xmatrix4_set(
 #endif
 
 #ifdef SCALAR_TYPE_GCC_VECTOR4
-XINLINE xmatrix4_t xmatrix4_set(
+ML_INLINE xmatrix4_t xmatrix4_set(
 		const xfloat_t s00, const xfloat_t s01, const xfloat_t s02, const xfloat_t s03,
 		const xfloat_t s10, const xfloat_t s11, const xfloat_t s12, const xfloat_t s13,
 		const xfloat_t s20, const xfloat_t s21, const xfloat_t s22, const xfloat_t s23,
@@ -95,7 +89,7 @@ XINLINE xmatrix4_t xmatrix4_set(
 #endif
 
 #ifdef SCALAR_TYPE_FLOAT
-XINLINE xfloat_t xvector4_dot(const xvector4_t xs, const xvector4_t ys) {
+ML_INLINE xfloat_t xvector4_dot(const xvector4_t xs, const xvector4_t ys) {
 	size_t index = 0;
 	xfloat_t r = {XFLOAT_ZERO};
 	for(index = 0; index < 4; index++) {
@@ -106,7 +100,7 @@ XINLINE xfloat_t xvector4_dot(const xvector4_t xs, const xvector4_t ys) {
 #endif
 
 #ifdef SCALAR_TYPE_GCC_VECTOR4
-XINLINE xfloat_t xvector4_dot(const xvector4_t xs, const xvector4_t ys) {
+ML_INLINE xfloat_t xvector4_dot(const xvector4_t xs, const xvector4_t ys) {
 	size_t index = 0;
 	xfloat_t r = {XFLOAT_ZERO};
 	for(index = 0; index < 4; index++) {
@@ -117,7 +111,7 @@ XINLINE xfloat_t xvector4_dot(const xvector4_t xs, const xvector4_t ys) {
 #endif
 
 #ifdef SCALAR_TYPE_FLOAT
-XINLINE xvector4_t xmatrix4_vector4_mul(const xmatrix4_t xs, const xvector4_t ys) {
+ML_INLINE xvector4_t xmatrix4_vector4_mul(const xmatrix4_t xs, const xvector4_t ys) {
 	size_t index = 0;
 	xvector4_t r = {{XFLOAT_ZERO}};
 	for(index = 0; index < 4; index++) {
@@ -128,7 +122,7 @@ XINLINE xvector4_t xmatrix4_vector4_mul(const xmatrix4_t xs, const xvector4_t ys
 #endif
 
 #ifdef SCALAR_TYPE_GCC_VECTOR4
-XINLINE xvector4_t xmatrix4_vector4_mul(const xmatrix4_t xs, const xvector4_t ys) {
+ML_INLINE xvector4_t xmatrix4_vector4_mul(const xmatrix4_t xs, const xvector4_t ys) {
 	size_t index = 0;
 	xvector4_t r = {XFLOAT_ZERO};
 	for(index = 0; index < 4; index++) {
@@ -139,7 +133,7 @@ XINLINE xvector4_t xmatrix4_vector4_mul(const xmatrix4_t xs, const xvector4_t ys
 #endif
 
 #ifdef SCALAR_TYPE_FLOAT
-XINLINE xvector4_t xvector4_element_mul(const xvector4_t xs, const xvector4_t ys) {
+ML_INLINE xvector4_t xvector4_element_mul(const xvector4_t xs, const xvector4_t ys) {
 	size_t index = 0;
 	xvector4_t r = {{XFLOAT_ZERO}};
 	for(index = 0; index < 4; index++) {
@@ -150,7 +144,7 @@ XINLINE xvector4_t xvector4_element_mul(const xvector4_t xs, const xvector4_t ys
 #endif
 
 #ifdef SCALAR_TYPE_GCC_VECTOR4
-XINLINE xvector4_t xvector4_element_mul(const xvector4_t xs, const xvector4_t ys) {
+ML_INLINE xvector4_t xvector4_element_mul(const xvector4_t xs, const xvector4_t ys) {
 	size_t index = 0;
 	xvector4_t r = {XFLOAT_ZERO};
 	for(index = 0; index < 4; index++) {
@@ -168,6 +162,7 @@ xvector4_t math_test(const xmatrix4_t m, const xvector4_t v) {
 int main()
 {
 	#ifndef ASMTEST
+
 	size_t index __attribute__((unused)) = 0;
 
 	xvector4_t v = xvector4_set(1.0f, 2.0f, 3.0f, 4.0f);
