@@ -12,11 +12,10 @@ The files:
  - **learn_opencl.c:** To compile and run shader programs generated with `learn_opencl_test` using OpenCL
  - **math_test.c:** Using this to test some of my math functions and generated ASM
  - **matvec.cl:** OpenCL shader program generated using `learn_opencl_test`
- - **xlut_exp_gen.c:** Code to generate lookup tables for exponentials
+ - **xlut_exp.h:** Header file with the exp LUT that is generated during the build by `xlut_exp_gen`
+ - **xlut_exp_gen.c:** Code to generate exponential lookup tables in `xlut_exp.h`
  - **xlut_exp_test.c:** For testing `xlut_exp_gen.c`
- 
- - **math_test.s:** A file that is generated during the build for me to test the ASM
- - **xlut_exp.h:** Header file with the exp LUT that is generated during the build
+
  
 ## Build
 
